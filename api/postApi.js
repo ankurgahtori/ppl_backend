@@ -1,6 +1,17 @@
 const db = require("../schemas/postSchema");
 
 module.exports = {
+  getPostByID: data => {
+    return new Promise((resolve, reject) => {
+      db.findOne(data, (err, result) => {
+        if (result) {
+          resolve(result);
+        } else {
+          reject();
+        }
+      });
+    });
+  },
   addPost: data => {
     return new Promise((resolve, reject) => {
       db.create(data, (err, data) => {
@@ -25,12 +36,12 @@ module.exports = {
   },
   updateLike: (postID, userID) => {
     return new Promise((resolve, reject) => {
-      let filter = { $and: [{ _id: postID.postID }, {like:userID.userID}] };
+      let filter = { $and: [{ _id: postID.postID }, { like: userID.userID }] };
       db.findOne(filter, (err, data) => {
         if (data) {
           db.findOneAndUpdate(
             { _id: postID.postID },
-            { $pull:  {like: userID.userID}  },
+            { $pull: { like: userID.userID } },
             { new: true },
             (err, result) => {
               if (err) {
@@ -49,7 +60,6 @@ module.exports = {
               if (err) {
                 reject();
               } else {
-
                 resolve(result);
               }
             }

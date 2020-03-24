@@ -15,6 +15,7 @@ const upload = multer({ storage: storage });
 router.get("/", (req, res) => {
   res.send("Server FOR Category Working fine");
 });
+
 router.post("/addCategory",upload.single('image'), async (req, res) => {
   try {
     req.body.category=req.body.category.toLowerCase();

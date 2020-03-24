@@ -4,7 +4,7 @@ const api = require("../api/postApi");
 const multer = require("multer");
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, 'public/post/');
+    cb(null, "public/post/");
   },
   filename: function(req, file, cb) {
     cb(null, Date.now() + file.originalname);
@@ -64,7 +64,7 @@ router.get("/getPost", async (req, res) => {
 });
 router.post("/updateDislike", upload.none(), async (req, res) => {
   try {
-    console.log("pressing dislike",req.body)
+    console.log("pressing dislike", req.body);
 
     await api.removeLike(
       { postID: req.body.postID },
@@ -79,10 +79,19 @@ router.post("/updateDislike", upload.none(), async (req, res) => {
     res.end();
   }
 });
+router.post("/getPostByID", async (req, res) => {
+  console.log("call reached here");
+  try {
+    let data = await api.getPostByID(req.body);
+    console.log(data);
+    res.send(data);
+  } catch (err) {}
+  res.end();
+});
 
 router.post("/updateLike", upload.none(), async (req, res) => {
   try {
-    console.log("pressing like",req.body)
+    console.log("pressing like", req.body);
     await api.removeDislike(
       { postID: req.body.postID },
       { userID: req.body.userID }
