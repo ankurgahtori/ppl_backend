@@ -63,5 +63,24 @@ module.exports = {
         }
       );
     });
+  },
+  verifyUser: data => {
+    console.log("HERE data is ", data);
+    return new Promise((resolve, reject) => {
+      db.findOneAndUpdate(
+        data,
+        { $set: { verify: true } },
+        { new: true },
+        (err, data) => {
+          if (data) {
+            console.log("resolving");
+            resolve(data);
+          } else {
+            console.log("rejecting");
+            reject();
+          }
+        }
+      );
+    });
   }
 };

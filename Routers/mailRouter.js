@@ -22,5 +22,16 @@ router.post("/", upload.none(), async (req, res) => {
     res.end();
   }
 });
-
+exports.sendVerificationMail = (email, id) => {
+  console.log("call reached here");
+  const msg = {
+    to: email,
+    from: "ankur.gahtori@daffodilsw.com",
+    subject: "Verify ppl account",
+    text: "www.facebook.com/Ankur",
+    html: `<a href='http://localhost:3000/verify/${id}'>Verify Link</a>`
+  };
+  sgMail.send(msg);
+  console.log("mail sent to : ", msg);
+};
 module.exports = router;
