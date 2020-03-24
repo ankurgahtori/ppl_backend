@@ -2,7 +2,7 @@ const db = require("../schemas/userSchema");
 module.exports = {
   login: (email, password) => {
     let filter = { $and: [{ email: email }, { password: password }] };
-    console.log(filter);
+    // console.log(filter);
     return new Promise((resolve, reject) => {
       db.findOne(filter, (err, data) => {
         // console.log(data);
@@ -34,6 +34,34 @@ module.exports = {
         if (data) resolve(data);
         else reject();
       });
+    });
+  },
+  getUserByEmail: data => {
+    return new Promise((resolve, reject) => {
+      db.findOne(data, (err, result) => {
+        if (result) {
+          console.log("mail sent");
+          let { _id } = result;
+          resolve({ _id });
+        } else {
+          reject();
+        }
+      });
+    });
+  },
+  updatePassword: data => {
+    return new Promise((resolve, reject) => {
+      db.updateOne(
+        { _id: data.userID },
+        { $set: { password: data.password } },
+        (err, result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject();
+          }
+        }
+      );
     });
   }
 };

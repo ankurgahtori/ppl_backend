@@ -35,4 +35,14 @@ router.post("/loginUser", upload.none(), async (req, res) => {
     res.send();
   }
 });
+router.post("/updatePassword", upload.none(), async (req, res) => {
+  try {
+    console.log(req.body);
+    let data = await api.updatePassword(req.body);
+    res.send(data);
+    console.log(data);
+  } catch (err) {
+    res.end();
+  }
+});
 module.exports = router;
