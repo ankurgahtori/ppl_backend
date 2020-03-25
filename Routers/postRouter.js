@@ -17,37 +17,36 @@ router.get("/", (req, res) => {
 });
 router.post("/create", upload.single("image"), async (req, res) => {
   try {
-    let monthArray = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec"
-    ];
-    let today = new Date();
-    let year = today.getFullYear();
-    let date = today.getDate();
-    let month = monthArray[today.getMonth()];
+    // let monthArray = [
+    //   "Jan",
+    //   "Feb",
+    //   "Mar",
+    //   "Apr",
+    //   "May",
+    //   "Jun",
+    //   "Jul",
+    //   "Aug",
+    //   "Sep",
+    //   "Oct",
+    //   "Nov",
+    //   "Dec"
+    // ];
+    // let today = new Date();
+    // let year = today.getFullYear();
+    // let date = today.getDate();
+    // let month = monthArray[today.getMonth()];
 
-    var hours = today.getHours();
-    var minutes = today.getMinutes();
-    var ampm = hours >= 12 ? "pm" : "am";
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    var strTime = hours + ":" + minutes + " " + ampm;
+    // var hours = today.getHours();
+    // var minutes = today.getMinutes();
+    // var ampm = hours >= 12 ? "pm" : "am";
+    // hours = hours % 12;
+    // hours = hours ? hours : 12; // the hour '0' should be '12'
+    // minutes = minutes < 10 ? "0" + minutes : minutes;
+    // var strTime = hours + ":" + minutes + " " + ampm;
 
-    req.body["time"] = strTime;
-    req.body["date"] = date + " " + month + " " + year;
+    // req.body["time"] = strTime;
+    // req.body["date"] = date + " " + month + " " + year;
     req.body["image"] = req.file.filename;
-
     let data = await api.addPost(req.body);
     res.send(data);
   } catch (err) {
@@ -64,8 +63,6 @@ router.get("/getPost", async (req, res) => {
 });
 router.post("/updateDislike", upload.none(), async (req, res) => {
   try {
-    console.log("pressing dislike", req.body);
-
     await api.removeLike(
       { postID: req.body.postID },
       { userID: req.body.userID }

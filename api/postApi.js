@@ -3,13 +3,22 @@ const db = require("../schemas/postSchema");
 module.exports = {
   getPostByID: data => {
     return new Promise((resolve, reject) => {
-      db.findOne(data, (err, result) => {
-        if (result) {
-          resolve(result);
-        } else {
-          reject();
-        }
-      });
+      // db.findOne(data, (err, result) => {
+      //   if (result) {
+      //     resolve(result);
+      //   } else {
+      //     reject();
+      //   }
+      // });
+      db.findOne(data)
+        .populate("category")
+        .exec((err, post) => {
+          if (err) {
+            reject();
+          } else {
+            resolve(post);
+          }
+        });
     });
   },
   addPost: data => {
@@ -18,6 +27,7 @@ module.exports = {
         if (err) {
           reject();
         } else {
+          console.log("resolving");
           resolve(data);
         }
       });
@@ -25,13 +35,24 @@ module.exports = {
   },
   getPost: () => {
     return new Promise((resolve, reject) => {
-      db.find({}, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
+      // db.find({}, (err, data) => {
+      //   if (err) {
+      //     reject(err);
+      //   } else {
+      //     resolve(data);
+      //     console.log(data, "sending data ");
+      //   }
+      // });
+      db.find({})
+        .populate("postedBy")
+        .populate("category")
+        .exec((err, posts) => {
+          if (err) {
+            reject();
+          } else {
+            resolve(posts);
+          }
+        });
     });
   },
   updateLike: (postID, userID) => {

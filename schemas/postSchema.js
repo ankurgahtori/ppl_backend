@@ -1,15 +1,18 @@
 const mongoose = require("mongoose");
 let Schema = mongoose.Schema;
+const registers = require("./userSchema");
+const categories = require("./categorySchema");
 const userSchema = new Schema(
   {
     image: { type: String },
-    userID: { type: String },
-    time: { type: Date },
+    postedBy: { type: mongoose.Schema.Types.ObjectId, ref: registers },
+    time: { type: Date, default: Date.now },
     title: { type: String },
-    category: { type: String },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: categories
+    },
     date: { type: String },
-    time: { type: String },
-    username: { type: String },
     like: { type: Array, default: [] },
     dislike: { type: Array, default: [] }
 

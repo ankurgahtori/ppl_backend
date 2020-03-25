@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
+const registers = require("./userSchema");
 let Schema = mongoose.Schema;
 const userSchema = new Schema(
   {
-    username: { type: String },
-    profilePic: { type: String },
-    userID: { type: String },
+    commentBy: { type: mongoose.Schema.Types.ObjectId, ref: registers },
     postID: { type: String },
-    comment: { type: String }
+    comment: { type: String },
+    time: { type: Date, default: Date.now }
   },
   { versionKey: false }
 );
