@@ -8,7 +8,8 @@ const userSchema = new Schema(
     fname: { type: String },
     lname: { type: String },
     select: { type: String },
-    verify: { type: Boolean, default: false }
+    verify: { type: Boolean, default: false },
+    profile: { type: String }
   },
   { versionKey: false }
 );
