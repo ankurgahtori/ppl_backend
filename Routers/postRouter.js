@@ -17,35 +17,6 @@ router.get("/", (req, res) => {
 });
 router.post("/create", upload.single("image"), async (req, res) => {
   try {
-    // let monthArray = [
-    //   "Jan",
-    //   "Feb",
-    //   "Mar",
-    //   "Apr",
-    //   "May",
-    //   "Jun",
-    //   "Jul",
-    //   "Aug",
-    //   "Sep",
-    //   "Oct",
-    //   "Nov",
-    //   "Dec"
-    // ];
-    // let today = new Date();
-    // let year = today.getFullYear();
-    // let date = today.getDate();
-    // let month = monthArray[today.getMonth()];
-
-    // var hours = today.getHours();
-    // var minutes = today.getMinutes();
-    // var ampm = hours >= 12 ? "pm" : "am";
-    // hours = hours % 12;
-    // hours = hours ? hours : 12; // the hour '0' should be '12'
-    // minutes = minutes < 10 ? "0" + minutes : minutes;
-    // var strTime = hours + ":" + minutes + " " + ampm;
-
-    // req.body["time"] = strTime;
-    // req.body["date"] = date + " " + month + " " + year;
     req.body["image"] = req.file.filename;
     let data = await api.addPost(req.body);
     res.send(data);
@@ -55,32 +26,32 @@ router.post("/create", upload.single("image"), async (req, res) => {
 });
 router.get("/getPost", async (req, res) => {
   try {
-    let data = await api.getPost();
+    let limit = req.param("limit");
+    let skip = req.param("skip");
+    let data = await api.getPost(limit, skip);
     res.send(data);
-  } catch {
+  } catch (err) {
     res.send();
   }
 });
-router.post("/updateDislike", upload.none(), async (req, res) => {
+router.post("/addComment", upload.none(), async (req, res) => {
   try {
-    await api.removeLike(
-      { postID: req.body.postID },
-      { userID: req.body.userID }
-    );
-    let data = await api.updateDislike(
-      { postID: req.body.postID },
-      { userID: req.body.userID }
+    let data = await api.addComment(
+      {
+        comment: req.body.comment,
+        commentedBy: req.body.commentedBy
+      },
+      { _id: req.body.postID }
     );
     res.send(data);
   } catch (err) {
     res.end();
   }
 });
+
 router.post("/getPostByID", async (req, res) => {
-  console.log("call reached here");
   try {
     let data = await api.getPostByID(req.body);
-    console.log(data);
     res.send(data);
   } catch (err) {}
   res.end();
@@ -88,7 +59,6 @@ router.post("/getPostByID", async (req, res) => {
 
 router.post("/updateLike", upload.none(), async (req, res) => {
   try {
-    console.log("pressing like", req.body);
     await api.removeDislike(
       { postID: req.body.postID },
       { userID: req.body.userID }
@@ -99,6 +69,7 @@ router.post("/updateLike", upload.none(), async (req, res) => {
     );
     res.send(data);
   } catch (err) {
+    console.log("here data is :  ", err);
     res.end();
   }
 });

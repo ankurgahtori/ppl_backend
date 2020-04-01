@@ -1,15 +1,18 @@
 const mongoose = require("mongoose");
-let Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
+
 const userSchema = new Schema(
   {
-    username: { type: String },
-    password: { type: String },
-    email: { type: String },
-    fname: { type: String },
-    lname: { type: String },
-    select: { type: String },
+    username: String,
+    password: String,
+    email: String,
+    firstName: String,
+    lastName: String,
     verify: { type: Boolean, default: false },
-    profile: { type: String }
+    image: {
+      type: String,
+      default: "158567166882020200123_115451.jpg-1582261371576"
+    }
   },
   { versionKey: false }
 );

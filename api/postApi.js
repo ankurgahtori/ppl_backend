@@ -3,15 +3,10 @@ const db = require("../schemas/postSchema");
 module.exports = {
   getPostByID: data => {
     return new Promise((resolve, reject) => {
-      // db.findOne(data, (err, result) => {
-      //   if (result) {
-      //     resolve(result);
-      //   } else {
-      //     reject();
-      //   }
-      // });
       db.findOne(data)
         .populate("category")
+        .populate("postedBy")
+        .populate("comments.commentedBy")
         .exec((err, post) => {
           if (err) {
             reject();
@@ -23,32 +18,48 @@ module.exports = {
   },
   addPost: data => {
     return new Promise((resolve, reject) => {
-      db.create(data, (err, data) => {
-        if (err) {
-          reject();
-        } else {
-          console.log("resolving");
-          resolve(data);
-        }
-      });
-    });
-  },
-  getPost: () => {
-    return new Promise((resolve, reject) => {
-      // db.find({}, (err, data) => {
-      //   if (err) {
-      //     reject(err);
-      //   } else {
-      //     resolve(data);
-      //     console.log(data, "sending data ");
-      //   }
-      // });
-      db.find({})
-        .populate("postedBy")
+      db.create(data)
         .populate("category")
-        .exec((err, posts) => {
+        .populate("postedBy")
+        .populate("comments.commentedBy")
+        .exec((err, post) => {
           if (err) {
             reject();
+          } else {
+            resolve(post);
+          }
+        });
+    });
+  },
+  addComment: (commentObject, postID) => {
+    return new Promise((resolve, reject) => {
+      db.findOneAndUpdate(
+        postID,
+        { $push: { comments: commentObject } },
+        { new: true }
+      )
+        .populate("postedBy")
+        .populate("comments.commentedBy")
+        .exec((err, result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(err);
+          }
+        });
+    });
+  },
+  getPost: (limit, skip, field, order) => {
+    return new Promise((resolve, reject) => {
+      console.log(limit, skip);
+      db.find({})
+        .skip(parseInt(skip))
+        .limit(parseInt(limit))
+        .populate("category")
+        .populate("comments.commentedBy")
+        .exec((err, posts) => {
+          if (err) {
+            reject(err);
           } else {
             resolve(posts);
           }
@@ -63,65 +74,39 @@ module.exports = {
           db.findOneAndUpdate(
             { _id: postID.postID },
             { $pull: { like: userID.userID } },
-            { new: true },
-            (err, result) => {
+            { new: true }
+          )
+            .populate("category")
+            .populate("postedBy")
+            .populate("comments.commentedBy")
+            .exec((err, post) => {
               if (err) {
                 reject();
               } else {
-                resolve(result);
+                resolve(post);
               }
-            }
-          );
+            });
         } else {
           db.findOneAndUpdate(
             { _id: postID.postID },
             { $push: { like: userID.userID } },
-            { new: true },
-            (err, result) => {
+            { new: true }
+          )
+            .populate("category")
+            .populate("postedBy")
+            .populate("comments.commentedBy")
+            .exec((err, post) => {
               if (err) {
                 reject();
               } else {
-                resolve(result);
+                resolve(post);
               }
-            }
-          );
+            });
         }
       });
     });
   },
-  removeLike: (postID, userID) => {
-    return new Promise((resolve, reject) => {
-      db.findOneAndUpdate(
-        { _id: postID.postID },
-        { $pull: { like: userID.userID } },
-        { new: true },
-        (err, result) => {
-          if (err) {
-            reject();
-          } else {
-            resolve(result);
-          }
-        }
-      );
-    });
-  },
 
-  updateDislike: (postID, userID) => {
-    return new Promise((resolve, reject) => {
-      db.findOneAndUpdate(
-        { _id: postID.postID },
-        { $addToSet: { dislike: userID.userID } },
-        { new: true },
-        (err, result) => {
-          if (err) {
-            reject();
-          } else {
-            resolve(result);
-          }
-        }
-      );
-    });
-  },
   removeDislike: (postID, userID) => {
     return new Promise((resolve, reject) => {
       db.findOneAndUpdate(

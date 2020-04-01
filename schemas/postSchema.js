@@ -1,26 +1,25 @@
 const mongoose = require("mongoose");
-let Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 const registers = require("./userSchema");
-const categories = require("./categorySchema");
-const userSchema = new Schema(
+const categorySchema = require("./categorySchema");
+const postSchema = new Schema(
   {
-    image: { type: String },
+    image: String,
     postedBy: { type: mongoose.Schema.Types.ObjectId, ref: registers },
-    time: { type: Date, default: Date.now },
-    title: { type: String },
+    date: { type: Date, default: Date.now },
+    title: String,
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: categories
+      ref: categorySchema
     },
-    date: { type: String },
-    like: { type: Array, default: [] },
-    dislike: { type: Array, default: [] }
-
-    // like: [{ userID: { type: String }, status: { type: Number, default: 0 } }],
-    // dislike: [
-    //   { userID: { type: String }, status: { type: Number, default: 0 } }
-    // ]
+    comments: [
+      {
+        comment: "String",
+        commentedBy: { type: mongoose.Schema.Types.ObjectId, ref: registers }
+      }
+    ],
+    like: { type: Array, default: [] }
   },
   { versionKey: false }
 );
-module.exports = mongoose.model("posts", userSchema);
+module.exports = mongoose.model("posts", postSchema);
