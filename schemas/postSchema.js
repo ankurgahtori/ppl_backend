@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const registers = require("./userSchema");
+const userSchema = require("./userSchema");
 const categorySchema = require("./categorySchema");
 const postSchema = new Schema(
   {
     image: String,
-    postedBy: { type: mongoose.Schema.Types.ObjectId, ref: registers },
+    postedBy: { type: mongoose.Schema.Types.ObjectId, ref: userSchema },
     date: { type: Date, default: Date.now },
     title: String,
     category: {
@@ -14,8 +14,8 @@ const postSchema = new Schema(
     },
     comments: [
       {
-        comment: "String",
-        commentedBy: { type: mongoose.Schema.Types.ObjectId, ref: registers }
+        comment: String,
+        commentedBy: { type: mongoose.Schema.Types.ObjectId, ref: userSchema }
       }
     ],
     like: { type: Array, default: [] }

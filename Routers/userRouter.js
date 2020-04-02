@@ -6,9 +6,9 @@ const sgMail = require("@sendgrid/mail");
 const mailApiKey = require("../config/keys")[0];
 const jwt = require("jsonwebtoken");
 const jwtKey = require("../config/keys");
-const url = require("../config/url");
-sgMail.setApiKey(mailApiKey);
+const clientUrl = require("../config/clientUrl");
 const bcrypt = require("bcrypt");
+sgMail.setApiKey(mailApiKey);
 const BCRYPT_SALT_ROUNDS = 10;
 
 var storage = multer.diskStorage({
@@ -38,7 +38,7 @@ router.post("/insertUser", upload.none(), async (req, res) => {
         from: "ankur.gahtori@daffodilsw.com",
         subject: "Verify ppl account",
         text: "www.facebook.com/Ankur",
-        html: `<a href='${url}/verify/${data._id}'>Verify Link</a>`
+        html: `<a href='${clientUrl}/verify/${data._id}'>Verify Link</a>`
       };
       sgMail.send(msg);
     });
@@ -47,9 +47,8 @@ router.post("/insertUser", upload.none(), async (req, res) => {
     res.end();
   }
 });
-router.post("/updateUser", upload.single("image"), async (req, res) => {
+router.post("/updateProfilePic", upload.single("image"), async (req, res) => {
   try {
-    console.log(req.file);
     let data = await api.updateProfilePic({
       userID: req.body.userID,
       image: req.file.filename
@@ -112,7 +111,7 @@ router.post("/verifyUserToken", async (req, res) => {
       res.send(_doc);
     }
   });
-  router.post("/sendMail", upload.none(), async (req, res) => {
+  router.post("/resetPassword", upload.none(), async (req, res) => {
     try {
       let userID = await api.getUserByEmail(req.body);
       const msg = {
@@ -120,7 +119,7 @@ router.post("/verifyUserToken", async (req, res) => {
         from: "ankur.gahtori@daffodilsw.com",
         subject: "password reset ppl",
         text: "www.facebook.com/Ankur",
-        html: `<a href='${url}/reset/${userID._id}'>Reset Password Link</a>`
+        html: `<a href='${clientUrl}/reset/${userID._id}'>Reset Password Link</a>`
       };
       sgMail.send(msg);
       res.send(userID);

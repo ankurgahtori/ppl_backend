@@ -26,9 +26,19 @@ router.post("/create", upload.single("image"), async (req, res) => {
 });
 router.get("/getPost", async (req, res) => {
   try {
+    let sortBasedOn = req.param("sort");
+    let sortingOrder = req.param("order");
+    let desiredCategory = req.param("category");
     let limit = req.param("limit");
     let skip = req.param("skip");
-    let data = await api.getPost(limit, skip);
+    let data = await api.getAllPosts(
+      limit,
+      skip,
+      desiredCategory,
+      sortBasedOn,
+      sortingOrder
+    );
+
     res.send(data);
   } catch (err) {
     res.send();
@@ -59,10 +69,6 @@ router.post("/getPostByID", async (req, res) => {
 
 router.post("/updateLike", upload.none(), async (req, res) => {
   try {
-    await api.removeDislike(
-      { postID: req.body.postID },
-      { userID: req.body.userID }
-    );
     let data = await api.updateLike(
       { postID: req.body.postID },
       { userID: req.body.userID }

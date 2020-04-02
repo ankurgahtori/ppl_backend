@@ -1,6 +1,5 @@
 var express = require("express");
 const port = 8082;
-const hostname = "192.168.43.83";
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -29,6 +28,6 @@ mongoose.connect(
 app.use("/user", userRouter);
 app.use("/post", postRouter);
 app.use("/category", categoryRouter);
-app.listen(port, hostname, (err, data) => {
-  console.log(`Server running -> ${hostname}:${port}`);
+app.listen(port, (err, data) => {
+  console.log(`Server running -> 127.0.0.1:${port}`);
 });

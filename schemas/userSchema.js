@@ -8,12 +8,9 @@ const userSchema = new Schema(
     email: String,
     firstName: String,
     lastName: String,
-    verify: { type: Boolean, default: false },
-    image: {
-      type: String,
-      default: "158567166882020200123_115451.jpg-1582261371576"
-    }
+    isVerified: { type: Boolean, default: false },
+    image: String
   },
   { versionKey: false }
 );
-module.exports = mongoose.model("register", userSchema);
+module.exports = mongoose.model("users", userSchema);

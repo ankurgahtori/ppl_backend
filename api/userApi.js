@@ -81,7 +81,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       db.findOneAndUpdate(
         data,
-        { $set: { verify: true } },
+        { $set: { isVerified: true } },
         { new: true },
         (err, data) => {
           if (data) {
