@@ -1,4 +1,6 @@
 const db = require("../schemas/postSchema");
+const mongoose = require("mongoose");
+const { ObjectId } = require("mongodb");
 module.exports = {
   getPostByID: data => {
     return new Promise((resolve, reject) => {
@@ -20,7 +22,6 @@ module.exports = {
       db.create(data)
         .populate("category")
         .populate("postedBy")
-        .populate("comments.commentedBy")
         .exec((err, post) => {
           if (err) {
             reject();
@@ -50,10 +51,10 @@ module.exports = {
     });
   },
   getAllPosts: (limit, skip, desiredCategory, sortBasedOn, sortingOrder) => {
-    let selectionFilter =
-      desiredCategory === "Fake_ID" ? {} : { category: desiredCategory };
     let sortingFilter = sortBasedOn === "date" ? { date: sortingOrder } : null;
     if (sortingFilter) {
+      let selectionFilter =
+        desiredCategory === "Fake_ID" ? {} : { category: desiredCategory };
       return new Promise((resolve, reject) => {
         db.find(selectionFilter)
           .sort(sortingFilter)
@@ -61,7 +62,6 @@ module.exports = {
           .limit(parseInt(limit))
           .populate("category")
           .populate("postedBy")
-          .populate("comments.commentedBy")
           .exec((err, posts) => {
             if (err) {
               console.log(err);
@@ -73,6 +73,17 @@ module.exports = {
           });
       });
     } else {
+      let selectionFilter;
+      if (desiredCategory !== "Fake_ID") {
+        let id = desiredCategory;
+
+        selectionFilter = {
+          category: ObjectId(id)
+        };
+        console.log("get all Posts");
+      } else {
+        selectionFilter = {};
+      }
       return new Promise((resolve, reject) => {
         db.aggregate([
           { $match: selectionFilter },
@@ -96,13 +107,40 @@ module.exports = {
           },
           {
             $limit: parseInt(limit)
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "postedBy",
+              foreignField: "_id",
+              as: "postedBy"
+            }
+          },
+
+          {
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "category"
+            }
+          },
+          {
+            $project: {
+              title: 1,
+              like: 1,
+              category: { $arrayElemAt: ["$category", 0] },
+              comments: 1,
+              postedBy: { $arrayElemAt: ["$postedBy", 0] },
+              image: 1,
+              date: 1
+            }
           }
         ]).exec((err, posts) => {
           if (err) {
             console.log("error", err);
             reject(err);
           } else {
-            console.log("reosle", posts);
             resolve(posts);
           }
         });
