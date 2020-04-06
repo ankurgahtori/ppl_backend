@@ -64,24 +64,31 @@ module.exports = {
           .populate("postedBy")
           .exec((err, posts) => {
             if (err) {
-              console.log(err);
               reject(err);
             } else {
-              console.log(posts);
               resolve(posts);
             }
           });
       });
     } else {
       let selectionFilter;
+      console.log(desiredCategory);
       if (desiredCategory !== "Fake_ID") {
+        console.log("***********");
         let id = desiredCategory;
 
         selectionFilter = {
           category: ObjectId(id)
         };
-        console.log("get all Posts");
       } else {
+        console.log(
+          "get all Posts based on ",
+          sortBasedOn,
+          "skip: ",
+          skip,
+          "limit: ",
+          limit
+        );
         selectionFilter = {};
       }
       return new Promise((resolve, reject) => {
@@ -133,7 +140,8 @@ module.exports = {
               comments: 1,
               postedBy: { $arrayElemAt: ["$postedBy", 0] },
               image: 1,
-              date: 1
+              date: 1,
+              length: 1
             }
           }
         ]).exec((err, posts) => {
@@ -141,6 +149,7 @@ module.exports = {
             console.log("error", err);
             reject(err);
           } else {
+            console.log(posts);
             resolve(posts);
           }
         });
