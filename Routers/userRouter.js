@@ -88,8 +88,12 @@ router.post("/loginUser", upload.none(), async (req, res) => {
 });
 router.post("/updatePassword", upload.none(), async (req, res) => {
   try {
-    let data = await api.updatePassword(req.body);
-    res.send(data);
+    let password = req.body.password;
+    bcrypt.hash(password, BCRYPT_SALT_ROUNDS, async (err, hashedPassword) => {
+      req.body.password = hashedPassword;
+      let data = await api.updatePassword(req.body);
+      res.send(data);
+    });
   } catch (err) {
     res.end();
   }
